@@ -43,6 +43,36 @@ class _QuizPageState extends State<QuizPage> {
   ];
   bool checkquestionanswer;
 
+  void markanswer(bool answer){
+    checkquestionanswer = questionanswer[questionnumber];
+    if(scorekeeper.length < 3) {
+      if (checkquestionanswer == answer) {
+        setState(() {
+          scorekeeper.add(
+              Icon(
+                Icons.check,
+                color: Colors.green,
+              ));
+        });
+      } else {
+        setState(() {
+          scorekeeper.add(
+              Icon(
+                Icons.close,
+                color: Colors.red,
+              )
+          );
+        });
+      }
+    }
+    if(questionnumber < 2) {
+      setState(() {
+        questionnumber++;
+      });
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -79,33 +109,9 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                                checkquestionanswer = questionanswer[questionnumber];
-                                if(scorekeeper.length < 3) {
-                                  if (checkquestionanswer == true) {
-                                    setState(() {
-                                      scorekeeper.add(
-                                          Icon(
-                                            Icons.check,
-                                            color: Colors.green,
-                                          ));
-                                    });
-                                  } else {
-                                    setState(() {
-                                      scorekeeper.add(
-                                          Icon(
-                                            Icons.close,
-                                            color: Colors.red,
-                                          )
-                                      );
-                                    });
-                                  }
-                                }
-                                if(questionnumber < 2) {
-                                  setState(() {
-                                    questionnumber++;
-                                  });
+                                markanswer(true);
 
-                                }
+
                         },
             ),
           )
@@ -125,34 +131,9 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                checkquestionanswer = questionanswer[questionnumber];
+                       markanswer(false);
 
-                if(scorekeeper.length < 3) {
-                  if (checkquestionanswer == false) {
-                    setState(() {
-                      scorekeeper.add(
-                          Icon(
-                            Icons.check,
-                            color: Colors.green,
-                          ));
-                    });
-                  } else {
-                    setState(() {
-                      scorekeeper.add(
-                          Icon(
-                            Icons.close,
-                            color: Colors.red,
-                          )
-                      );
-                    });
-                  }
-                }
-                if(questionnumber < 2) {
-                  setState(() {
-                    questionnumber++;
-                  });
 
-                }
               },
             ),
           ),
