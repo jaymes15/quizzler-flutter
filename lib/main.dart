@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+
+QuizBrain quiz = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -28,25 +33,9 @@ class _QuizPageState extends State<QuizPage> {
 
   List<Icon> scorekeeper = [];
 
-  List<String> questions = [
-    'You can lead a cow down stairs but not up stairs.',
-    'Approximately one quarter of human bones are in the feet.',
-    'A slug\'s blood is green.'
-  ];
-
-  int questionnumber = 0;
-
-  List<bool> questionanswer = [
-    false,
-    true,
-    true
-  ];
-  bool checkquestionanswer;
-
-  void markanswer(bool answer){
-    checkquestionanswer = questionanswer[questionnumber];
-    if(scorekeeper.length < 3) {
-      if (checkquestionanswer == answer) {
+  void showAnswers(bool ans){
+    if(scorekeeper.length < quiz.numberofquestions()) {
+      if (ans == true) {
         setState(() {
           scorekeeper.add(
               Icon(
@@ -54,7 +43,7 @@ class _QuizPageState extends State<QuizPage> {
                 color: Colors.green,
               ));
         });
-      } else {
+      } else if (ans == false) {
         setState(() {
           scorekeeper.add(
               Icon(
@@ -64,13 +53,26 @@ class _QuizPageState extends State<QuizPage> {
           );
         });
       }
-    }
-    if(questionnumber < 2) {
       setState(() {
-        questionnumber++;
+        quiz.nextQuestion();
+      });
+    }else{
+      _onBasicAlertPressed(context);
+      setState(() {
+        quiz.resetQuestion();
+        scorekeeper.clear();
       });
 
     }
+
+  }
+
+  _onBasicAlertPressed(context) {
+    Alert(
+        context: context,
+        title: "Quizzler",
+        desc: "You Have Gotten To The Last Question.Application Will Be Reset.")
+        .show();
   }
 
   @override
@@ -85,7 +87,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions[questionnumber],
+                quiz.getQuestions(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -109,8 +111,9 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                                markanswer(true);
+                   var answer = quiz.checkAnswer(true);
 
+                    showAnswers(answer);
 
                         },
             ),
@@ -131,15 +134,18 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                       markanswer(false);
+                var answer = quiz.checkAnswer(false);
+                showAnswers(answer);
 
-
+                setState(() {
+                  quiz.nextQuestion();
+                });
               },
             ),
           ),
         ),
         Row(
-          children: scorekeeper,
+        children: scorekeeper,
         )
       ],
     );
